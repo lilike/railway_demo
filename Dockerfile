@@ -26,13 +26,14 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
-# Copy requirements and install Python dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Copy pyproject.toml and install dependencies using uv
+COPY pyproject.toml uv.lock ./
+RUN pip install uv && \
+    uv sync --frozen --no-dev
 
 # Install Playwright browsers and dependencies
-RUN playwright install-deps chromium
-RUN playwright install chromium
+RUN . .venv/bin/activate && playwright install-deps chromium
+RUN . .venv/bin/activate && playwright install chromium
 
 # Copy application code
 COPY . .
@@ -44,4 +45,4 @@ RUN chmod +x start.sh
 EXPOSE 8081
 
 # Start command
-CMD ["python", "main_enhanced.py"]
+CMD [".venv/bin/python", "main_backend.py"]
