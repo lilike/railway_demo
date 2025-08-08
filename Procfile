@@ -1,1 +1,1 @@
-web: python main_backend.py
+web: .venv/bin/python main_backend.py
