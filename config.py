@@ -54,6 +54,11 @@ INFURA_URL = os.getenv('INFURA_URL', 'https://mainnet.infura.io/v3/your_project_
 CHECK_INTERVAL_HOURS = float(os.getenv('CHECK_INTERVAL_HOURS', '1'))
 ALERT_THRESHOLD = float(os.getenv('ALERT_THRESHOLD', '20.0'))
 
+# Supabase配置
+SUPABASE_URL = os.getenv('SUPABASE_URL')
+SUPABASE_ANON_KEY = os.getenv('SUPABASE_ANON_KEY')
+SUPABASE_SERVICE_ROLE_KEY = os.getenv('SUPABASE_SERVICE_ROLE_KEY')
+
 # Flask配置
 PORT = int(os.getenv('PORT', '8081'))
 
