@@ -44,4 +44,4 @@ RUN chmod +x start.sh
 EXPOSE 8081
 
 # Start command
-CMD ["python", "main.py"]
+CMD ["python", "main_enhanced.py"]

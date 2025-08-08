@@ -1,87 +1,102 @@
-# Railway Playwright API
+# SusDE 套利监控 Telegram 机器人
 
-基于 Railway 部署的 Playwright 爬虫 HTTP 接口项目。
+这是一个自动监控 SusDE 套利机会的 Telegram 机器人，能够定期计算 USDT → SUSDE → USDE → USDT 的套利路径收益率。
 
 ## 功能特性
 
-- ✅ HTTP 接口接收爬虫请求
-- ✅ 使用 Playwright + Chromium 进行网页爬取
-- ✅ 返回页面标题和 HTML 内容
-- ✅ 支持 Railway 一键部署
-- ✅ 健康检查端点
+- 🔄 自动监控套利机会（USDT → SUSDE → USDE → USDT）
+- 📊 计算年化收益率和实时盈亏
+- 🚨 高收益告警（默认阈值 20%）
+- 📱 Telegram 机器人交互
+- 🌐 Web API 接口
+- ☁️ Railway 部署支持
 
-## 接口说明
+## 套利路径
 
-### 爬虫接口
-- **请求方式**: GET
-- **接口路径**: `/crawl`
-- **参数**: 
-  - `url` (必填) - 要爬取的网页 URL
+1. **USDT → SUSDE** (通过 1inch 获取汇率)
+2. **SUSDE → USDE** (通过智能合约解质押)
+3. **USDE → USDT** (通过 1inch 获取汇率)
 
-### 响应格式
-```json
-{
-  "title": "页面标题",
-  "html": "<!DOCTYPE html>..."
-}
-```
+## 环境变量配置
 
-### 错误响应
-```json
-{
-  "error": "错误信息描述"
-}
-```
-
-## 使用示例
+在 Railway 或本地环境中设置以下环境变量：
 
 ```bash
-# 爬取示例网站
-curl "https://your-railway-domain.railway.app/crawl?url=https://example.com"
-
-# 健康检查
-curl "https://your-railway-domain.railway.app/"
+TELEGRAM_BOT_TOKEN=your_bot_token_here
+TELEGRAM_CHAT_ID=your_chat_id_here
+INFURA_URL=https://eth.llamarpc.com/
 ```
+
+### 获取 Telegram Bot Token
+
+1. 在 Telegram 中找到 @BotFather
+2. 发送 `/newbot` 创建新机器人
+3. 按提示设置机器人名称
+4. 获取 Bot Token
+
+### 获取 Chat ID
+
+1. 启动机器人后，向机器人发送任意消息
+2. 访问 `https://api.telegram.org/bot<YourBOTToken>/getUpdates`
+3. 在返回的 JSON 中找到 `chat.id`
+
+## 部署到 Railway
+
+1. Fork 这个仓库
+2. 在 Railway 中连接你的 GitHub 仓库
+3. 设置环境变量
+4. 部署应用
+
+## Telegram 机器人命令
+
+- `/start` - 启动机器人
+- `/check` - 立即检查套利机会
+- `/monitor` - 开始自动监控
+- `/stop` - 停止自动监控
+- `/status` - 查看监控状态
+
+## Web API 接口
+
+- `GET /` - 健康检查
+- `GET /check?amount=100000` - 手动检查套利机会
+- `GET /status` - 获取机器人状态
 
 ## 本地开发
 
-1. 安装依赖：
 ```bash
+# 安装依赖
 pip install -r requirements.txt
+
+# 安装 Playwright 浏览器
 playwright install chromium
+
+# 设置环境变量
+export TELEGRAM_BOT_TOKEN=your_token
+export TELEGRAM_CHAT_ID=your_chat_id
+
+# 运行应用
+python main_enhanced.py
 ```
 
-2. 启动服务：
-```bash
-python main.py
-```
+## 监控逻辑
 
-3. 测试接口：
-```bash
-curl "http://localhost:5000/crawl?url=https://example.com"
-```
+- 每小时自动检查一次套利机会
+- 如果年化收益率超过 20%，立即发送告警
+- 每 6 小时发送一次定期报告
+- 所有告警记录保存到 `alerts.json` 文件
 
-## Railway 部署
+## 注意事项
 
-1. 将代码推送到 GitHub 仓库
-2. 在 Railway 中连接该仓库
-3. Railway 会自动识别 `Procfile` 并执行部署
-4. 部署完成后获取域名进行测试
-
-## 项目结构
-
-```
-railway_demo/
-├── main.py          # Flask 应用主文件
-├── requirements.txt # Python 依赖
-├── Procfile        # Railway 部署配置
-├── start.sh        # 启动脚本
-└── README.md       # 项目说明
-```
+- 数据仅供参考，不构成投资建议
+- 实际交易存在滑点和手续费
+- 价格影响为估算值
+- 建议在实际使用前进行充分测试
 
 ## 技术栈
 
-- **语言**: Python 3.11+
-- **Web 框架**: Flask
-- **爬虫框架**: Playwright (Chromium)
-- **部署平台**: Railway
+- Python 3.11
+- Flask (Web API)
+- Playwright (网页自动化)
+- Web3.py (区块链交互)
+- python-telegram-bot (Telegram API)
+- Railway (部署平台)
