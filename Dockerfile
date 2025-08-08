@@ -38,9 +38,6 @@ RUN . .venv/bin/activate && playwright install chromium
 # Copy application code
 COPY . .
 
-# Make start script executable
-RUN chmod +x start.sh
-
 # Expose port
 EXPOSE 8081
 
